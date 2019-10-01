@@ -29,7 +29,7 @@ class MainViewModel(private val currencyRepository: ICurrencyRepository) : BaseV
                 _progressVisibility.postValue(false)
             }
             .subscribe({
-
+                it.body()?.source
             }, {
                 Log.e(TAG, it.toString())
             })
