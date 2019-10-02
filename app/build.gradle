@@ -20,7 +20,7 @@ android {
         buildConfigField "String", API_BASE_URL, "\"http://apilayer.net/api/\""
 
         def API_ACCESS_KEY = "API_ACCESS_KEY"
-        buildConfigField "String", API_ACCESS_KEY, "\"4e581030c3d43bb1cd4aa3157b35e06d\""
+        buildConfigField "String", API_ACCESS_KEY, "\"40def07b1500b42c6792d0fc7bba1498\""
     }
     buildTypes {
         release {
