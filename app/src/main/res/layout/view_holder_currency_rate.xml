@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
 >
 
     <data>
@@ -10,23 +11,34 @@
 
     </data>
 
-    <LinearLayout android:orientation="vertical"
-                  android:layout_width="match_parent"
-                  android:layout_height="match_parent">
+    <androidx.cardview.widget.CardView android:orientation="vertical"
+                                       android:layout_width="match_parent"
+                                       android:layout_height="wrap_content"
+                                       app:cardCornerRadius="4dp">
 
-        <TextView android:id="@+id/currencyTitleTextView"
-                  android:padding="10dp"
-                  android:gravity="center"
-                  android:text="@{currencyRateItem.currencyName}"
-                  android:layout_width="match_parent"
-                  android:layout_height="wrap_content"/>
+        <LinearLayout android:layout_width="match_parent"
+                      android:layout_height="120dp"
+                      android:orientation="vertical"
+                      app:layout_constraintDimensionRatio="W, 1:1">
+            <TextView android:id="@+id/currencyTitleTextView"
+                      android:padding="10dp"
+                      android:gravity="center"
+                      android:layout_weight="1"
+                      android:text="@{currencyRateItem.currencyName}"
+                      android:layout_width="match_parent"
+                      android:layout_height="0dp"
+                      tools:text="USD"/>
 
-        <TextView android:id="@+id/currencyRateTextView"
-                  android:layout_width="match_parent"
-                  android:padding="10dp"
-                  android:gravity="center"
-                  android:layout_height="wrap_content"/>
+            <TextView android:id="@+id/currencyRateTextView"
+                      android:layout_width="match_parent"
+                      android:padding="10dp"
+                      android:gravity="center"
+                      android:layout_weight="1"
+                      android:text="@{@string/dollar_sign(currencyRateItem.currencyRate)}"
+                      android:layout_height="0dp"
+                      tools:text="$1.111111"/>
+        </LinearLayout>
 
-    </LinearLayout>
+    </androidx.cardview.widget.CardView>
 
 </layout>

@@ -36,7 +36,6 @@ class ApiManager private constructor(
             ApiManager()
         }
 
-        @JvmStatic
         fun getInstance(): ApiManager {
             return apiManagerInstance
         }

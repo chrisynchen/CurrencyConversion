@@ -32,6 +32,12 @@ android {
     dataBinding {
         enabled = true
     }
+
+    compileOptions {
+        incremental true
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 dependencies {
@@ -55,5 +61,6 @@ dependencies {
     implementation "io.reactivex.rxjava2:rxandroid:$versions.rxandroid"
     implementation "com.google.code.gson:gson:$versions.gson"
     implementation "androidx.recyclerview:recyclerview:$versions.recyclerview"
+    implementation "androidx.cardview:cardview:$versions.cardView"
     implementation "androidx.lifecycle:lifecycle-extensions:$versions.lifecycle"
 }

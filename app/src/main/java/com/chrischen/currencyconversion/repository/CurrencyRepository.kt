@@ -17,6 +17,8 @@ class CurrencyRepository @Inject constructor(
 
     private var currencyListDetailSingle: Single<Response<CurrencyListDetail>>? = null
 
+    //TODO refactor to timestamp
+    private var recentExchangeRate: Single<Response<ExchangeRate>>? = null
 
     override fun fetchCurrencyList(): Single<Response<CurrencyListDetail>> {
         // Currency list will not change frequently.
@@ -28,6 +30,11 @@ class CurrencyRepository @Inject constructor(
     }
 
     override fun fetchRecentExchangeRate(): Single<Response<ExchangeRate>> {
-        return currencyService.fetchRecentExchangeRate(BuildConfig.API_ACCESS_KEY)
+
+        //TODO refactor to timestamp
+        val response = recentExchangeRate ?: currencyService.fetchRecentExchangeRate(BuildConfig.API_ACCESS_KEY)
+        recentExchangeRate = response
+
+        return response
     }
 }

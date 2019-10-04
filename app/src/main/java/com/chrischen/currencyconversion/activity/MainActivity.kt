@@ -40,7 +40,7 @@ class MainActivity : AppCompatActivity() {
             adapter = this@MainActivity.adapter
         }
 
-        viewModel.items.observe(this, Observer {
+        viewModel.currencyRateItems.observe(this, Observer {
             adapter.setItems(it)
         })
     }

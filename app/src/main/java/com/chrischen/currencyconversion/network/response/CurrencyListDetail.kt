@@ -6,5 +6,5 @@ package com.chrischen.currencyconversion.network.response
 
 data class CurrencyListDetail(
     val source: String?,
-    val currencies: LinkedHashMap<String, String>
+    val currencies: LinkedHashMap<String, String>?
 )
