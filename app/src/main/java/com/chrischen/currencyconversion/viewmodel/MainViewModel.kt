@@ -35,6 +35,10 @@ class MainViewModel(private val currencyRepository: ICurrencyRepository) : BaseV
     val logMessage: LiveData<Pair<String, String>>
         get() = _logMessage
 
+    private val _toastMessage = MutableLiveData<String>()
+    val toastMessage: LiveData<String>
+        get() = _toastMessage
+
     private var selectCurrency = ""
 
     private var inputAmount = 0.toDouble()
@@ -56,12 +60,14 @@ class MainViewModel(private val currencyRepository: ICurrencyRepository) : BaseV
 
                 amount
             }
+            .compose(RxUtil.applyIoMainObservableSchedulers())
             .subscribe(
                 { amount ->
                     onAmountOrCurrencyChanged(inputAmount = amount)
                 },
                 {
                     _logMessage.postValue(Pair(TAG, it.message ?: ""))
+                    _toastMessage.postValue(it.message ?: "")
                 })
         addDisposable(disposable)
     }
@@ -91,11 +97,13 @@ class MainViewModel(private val currencyRepository: ICurrencyRepository) : BaseV
             BiFunction<Response<CurrencyListDetail?>, Response<ExchangeRate?>, List<MainAdapter.Item>> { currencyListDetailResponse, exchangeRateResponse ->
 
                 val currencyList =
-                    currencyListDetailResponse.body()?.currencies?.keys?.toList()
+                    currencyListDetailResponse.body()?.currencies?.keys?.toList() ?: emptyList()
+
+                //Only happened when user not select currency. use default source instead.
                 if (selectCurrency.isEmpty()) {
                     selectCurrency = exchangeRateResponse.body()?.source ?: ""
                 }
-                val currencyItem = if (currencyList == null) {
+                val topItem = if (currencyList.isEmpty()) {
                     null
                 } else {
                     MainAdapter.Item.TopItem(currencyList, selectCurrency, inputAmount)
@@ -124,8 +132,8 @@ class MainViewModel(private val currencyRepository: ICurrencyRepository) : BaseV
                 val items = mutableListOf<MainAdapter.Item>()
                     .also { items ->
 
-                        if (currencyItem != null) {
-                            items.add(currencyItem)
+                        if (topItem != null) {
+                            items.add(topItem)
                         }
 
                         if (!currencyRateItem.isNullOrEmpty()) {
@@ -134,7 +142,7 @@ class MainViewModel(private val currencyRepository: ICurrencyRepository) : BaseV
                     }
                 items
             })
-            .compose(RxUtil.applyIoMainSchedulers())
+            .compose(RxUtil.applyIoMainSingleSchedulers())
             .doOnSubscribe {
                 _progressVisibility.postValue(true)
             }
@@ -145,6 +153,7 @@ class MainViewModel(private val currencyRepository: ICurrencyRepository) : BaseV
                 _currencyItems.postValue(it)
             }, {
                 _logMessage.postValue(Pair(TAG, it.message ?: ""))
+                _toastMessage.postValue(it.message ?: "")
             })
         addDisposable(disposable)
     }
