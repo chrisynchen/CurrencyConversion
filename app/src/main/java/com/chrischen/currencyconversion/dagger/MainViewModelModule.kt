@@ -11,5 +11,6 @@ import dagger.Provides
 @Module
 class MainViewModelModule {
     @Provides
-    fun provideMainViewModel(currencyRepository: CurrencyRepository): MainViewModel = MainViewModel(currencyRepository)
+    fun provideMainViewModel(currencyRepository: CurrencyRepository): MainViewModel =
+        MainViewModel(currencyRepository)
 }

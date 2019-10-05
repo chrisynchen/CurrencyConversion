@@ -44,16 +44,20 @@ class MainViewModel(private val currencyRepository: ICurrencyRepository) : BaseV
     init {
         val disposable = publishSubject
             .debounce(1, TimeUnit.SECONDS)
-            .subscribe(
-                { amountString ->
-                    var amount = 0.toDouble()
-                    try {
-                        if (!amountString.isNullOrEmpty()) {
-                            amount = amountString.toDouble()
-                        }
-                    } catch (e: NumberFormatException) {
-                        _logMessage.postValue(Pair(TAG, e.message ?: ""))
+            .map { amountString ->
+                var amount = 0.toDouble()
+                try {
+                    if (amountString.isNotEmpty()) {
+                        amount = amountString.toDouble()
                     }
+                } catch (e: NumberFormatException) {
+                    _logMessage.postValue(Pair(TAG, e.message ?: ""))
+                }
+
+                amount
+            }
+            .subscribe(
+                { amount ->
                     onAmountOrCurrencyChanged(inputAmount = amount)
                 },
                 {

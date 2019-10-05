@@ -11,6 +11,7 @@ import com.chrischen.currencyconversion.adapter.MainAdapter
 import com.chrischen.currencyconversion.dagger.DaggerMainComponent
 import com.chrischen.currencyconversion.databinding.ActivityMainBinding
 import com.chrischen.currencyconversion.dialog.CurrencySelectionDialog
+import com.chrischen.currencyconversion.storage.CurrencyPreference
 import com.chrischen.currencyconversion.viewholder.TopHolder
 import com.chrischen.currencyconversion.viewmodel.MainViewModel
 import com.chrischen.currencyconversion.widget.GridItemDecoration
@@ -34,7 +35,9 @@ class MainActivity : AppCompatActivity(), TopHolder.Listener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val component = DaggerMainComponent.create()
+        val component = DaggerMainComponent.builder()
+            .currencyPreference(CurrencyPreference)
+            .build()
         component.inject(this)
         initViews()
     }

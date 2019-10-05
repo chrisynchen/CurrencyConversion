@@ -6,7 +6,7 @@ import com.chrischen.currencyconversion.network.response.CurrencyListDetail
 import com.chrischen.currencyconversion.network.response.ExchangeRate
 import com.google.gson.GsonBuilder
 
-object CurrencyPreference {
+object CurrencyPreference: ICurrencyPreference {
     private const val PREFERENCES_NAME = "currency_preferences"
     private const val PREFERENCES_MODE = Context.MODE_PRIVATE
     private lateinit var preferences: SharedPreferences
@@ -17,7 +17,7 @@ object CurrencyPreference {
     private const val EXCHANGE_RATE_TIMESTAMP = "EXCHANGE_RATE_TIMESTAMP"
 
 
-    fun init(context: Context) {
+    override fun init(context: Context) {
         preferences =
             context.applicationContext.getSharedPreferences(PREFERENCES_NAME, PREFERENCES_MODE)
     }
@@ -32,7 +32,7 @@ object CurrencyPreference {
         editor.apply()
     }
 
-    var currencyListDetail: CurrencyListDetail?
+    override var currencyListDetail: CurrencyListDetail?
         get() = try {
             val currencyListDetail = GsonBuilder().create().fromJson(
                 preferences.getString(CURRENCY_LIST_DETAIL, null),
@@ -56,7 +56,7 @@ object CurrencyPreference {
             it.putString(CURRENCY_LIST_DETAIL, currencyListDetail)
         }
 
-    var exchangeRate: ExchangeRate?
+    override var exchangeRate: ExchangeRate?
         get() = try {
             val exchangeRate = GsonBuilder().create().fromJson(
                 preferences.getString(EXCHANGE_RATE, null),
@@ -80,13 +80,13 @@ object CurrencyPreference {
             it.putString(EXCHANGE_RATE, exchangeRate)
         }
 
-    var currencyListDetailTimestamp: Long
+    override var currencyListDetailTimestamp: Long
         get() = preferences.getLong(CURRENCY_LIST_DETAIL_TIMESTAMP, 0)
         set(value) = preferences.edit {
             it.putLong(CURRENCY_LIST_DETAIL_TIMESTAMP, value)
         }
 
-    var exchangeRateTimestamp: Long
+    override var exchangeRateTimestamp: Long
         get() = preferences.getLong(EXCHANGE_RATE_TIMESTAMP, 0)
         set(value) = preferences.edit {
             it.putLong(EXCHANGE_RATE_TIMESTAMP, value)
