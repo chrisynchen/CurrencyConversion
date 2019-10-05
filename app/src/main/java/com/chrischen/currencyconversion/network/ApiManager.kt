@@ -1,6 +1,8 @@
 package com.chrischen.currencyconversion.network
 
+import android.os.Environment
 import com.chrischen.currencyconversion.BuildConfig
+import okhttp3.Cache
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -13,11 +15,24 @@ import java.util.concurrent.TimeUnit
  */
 class ApiManager private constructor(
     builder: OkHttpClient.Builder = OkHttpClient.Builder()
-        .readTimeout(30, TimeUnit.SECONDS)
-        .connectTimeout(30, TimeUnit.SECONDS)
 ) {
 
     init {
+        val cacheSize = (5 * 1024 * 1024).toLong()
+        val myCache = Cache(Environment.getDownloadCacheDirectory(), cacheSize)
+        builder.cache(myCache)
+            .readTimeout(30, TimeUnit.SECONDS)
+            .connectTimeout(30, TimeUnit.SECONDS)
+            .addNetworkInterceptor { chain ->
+                val request = chain.request()
+                //cache 600 seconds
+                request.newBuilder()
+                    .header("Cache-Control", "public, max-age=" + 600)
+                    .removeHeader("Pragma")
+                    .build()
+                chain.proceed(request)
+            }
+
         if (BuildConfig.DEBUG) {
             builder.addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
         }

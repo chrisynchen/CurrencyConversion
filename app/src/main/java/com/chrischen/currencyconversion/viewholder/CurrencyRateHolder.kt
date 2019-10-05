@@ -10,7 +10,7 @@ import com.chrischen.currencyconversion.databinding.ViewHolderCurrencyRateBindin
 class CurrencyRateHolder(private val viewDataBinding: ViewHolderCurrencyRateBinding) :
     RecyclerView.ViewHolder(viewDataBinding.root) {
 
-    fun bind(currencyItem: MainAdapter.CurrencyRateItem) {
+    fun bind(currencyItem: MainAdapter.Item.CurrencyRateItem) {
         viewDataBinding.apply {
             currencyRateItem = currencyItem
             executePendingBindings()

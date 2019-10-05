@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">CurrencyConversion</string>
     <string name="dollar_sign">$%f</string>
+    <string name="amount_hint">Please input your amount here</string>
 </resources>

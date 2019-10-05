@@ -16,7 +16,7 @@
                 android:id="@+id/swipeRefreshLayout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                app:refreshing="@{vm.progressVisibility.getValue()}"
+                app:refreshing="@{vm.progressVisibility.booleanValue()}"
                 app:onRefreshListener="@{() -> vm.onRefresh()}">
 
             <androidx.recyclerview.widget.RecyclerView

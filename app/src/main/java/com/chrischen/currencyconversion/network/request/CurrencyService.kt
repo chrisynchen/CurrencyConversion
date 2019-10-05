@@ -13,8 +13,8 @@ import retrofit2.http.Query
 interface CurrencyService {
 
     @GET("live")
-    fun fetchRecentExchangeRate(@Query("access_key") key: String): Single<Response<ExchangeRate>>
+    fun fetchRecentExchangeRate(@Query("access_key") key: String): Single<Response<ExchangeRate?>>
 
     @GET("list")
-    fun fetchCurrencyList(@Query("access_key") key: String): Single<Response<CurrencyListDetail>>
+    fun fetchCurrencyList(@Query("access_key") key: String): Single<Response<CurrencyListDetail?>>
 }

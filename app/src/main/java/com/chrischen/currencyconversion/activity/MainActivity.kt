@@ -9,13 +9,18 @@ import com.chrischen.currencyconversion.R
 import com.chrischen.currencyconversion.adapter.MainAdapter
 import com.chrischen.currencyconversion.dagger.DaggerMainComponent
 import com.chrischen.currencyconversion.databinding.ActivityMainBinding
+import com.chrischen.currencyconversion.viewholder.TopHolder
 import com.chrischen.currencyconversion.viewmodel.MainViewModel
+import com.chrischen.currencyconversion.widget.GridItemDecoration
 import javax.inject.Inject
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), TopHolder.Listener {
 
     companion object {
-        private const val ROW_COUNT = 3
+        private const val SPAN_TOP = 3
+        private const val SPAN_ITEM = 1
+        private const val SPAN_COUNT = SPAN_TOP
+        private const val GRID_ITEM_MARGIN = 8
     }
 
     @Inject
@@ -23,24 +28,39 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
-    private val adapter = MainAdapter()
+    private val adapter = MainAdapter(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         val component = DaggerMainComponent.create()
         component.inject(this)
+        initViews()
+    }
 
+    private fun initViews() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
-        binding.lifecycleOwner = this
-        binding.vm = viewModel
 
-        binding.recyclerView.apply {
-            layoutManager = GridLayoutManager(this@MainActivity, ROW_COUNT)
-            adapter = this@MainActivity.adapter
+        binding.apply {
+            lifecycleOwner = this@MainActivity
+            vm = viewModel
+            recyclerView.let {
+                it.layoutManager =
+                    GridLayoutManager(this@MainActivity, SPAN_TOP).also { layoutManager ->
+                        layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+                            override fun getSpanSize(position: Int): Int {
+                                return when (adapter.getItemViewType(position)) {
+                                    MainAdapter.Item.TYPE_TOP -> SPAN_TOP
+                                    else -> SPAN_ITEM
+                                }
+                            }
+                        }
+                    }
+                it.addItemDecoration(GridItemDecoration(SPAN_COUNT, GRID_ITEM_MARGIN))
+                it.adapter = adapter
+            }
         }
 
-        viewModel.currencyRateItems.observe(this, Observer {
+        viewModel.currencyItems.observe(this, Observer {
             adapter.setItems(it)
         })
     }
@@ -48,5 +68,15 @@ class MainActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         viewModel.onRefresh()
+    }
+
+    override fun onAmountChanged(amount: Double?) {
+        amount?.let {
+            viewModel.onCurrencyChanged(inputAmount = it)
+        }
+    }
+
+    override fun showCurrencyListDialog(currencyList: List<String>?) {
+
     }
 }
