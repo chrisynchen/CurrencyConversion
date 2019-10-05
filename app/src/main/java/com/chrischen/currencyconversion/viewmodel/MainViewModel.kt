@@ -44,7 +44,6 @@ class MainViewModel(private val currencyRepository: ICurrencyRepository) : BaseV
     init {
         val disposable = publishSubject
             .debounce(1, TimeUnit.SECONDS)
-            .distinct()
             .subscribe(
                 { amountString ->
                     var amount = 0.toDouble()
