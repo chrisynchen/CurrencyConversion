@@ -9,6 +9,6 @@ import androidx.recyclerview.widget.RecyclerView
  */
 fun <T : View> RecyclerView.ViewHolder.bindView(@IdRes resId: Int): Lazy<T> {
     return lazy {
-        itemView.findViewById<T>(resId)
+        itemView.findViewById(resId)
     }
 }
