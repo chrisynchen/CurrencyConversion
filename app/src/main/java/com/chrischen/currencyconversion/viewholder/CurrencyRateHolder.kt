@@ -13,7 +13,6 @@ class CurrencyRateHolder(private val viewDataBinding: ViewHolderCurrencyRateBind
     fun bind(currencyItem: MainAdapter.Item.CurrencyRateItem) {
         viewDataBinding.apply {
             currencyRateItem = currencyItem
-            executePendingBindings()
         }
     }
 }

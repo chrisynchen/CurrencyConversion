@@ -33,16 +33,7 @@ class TopHolder(private val viewDataBinding: ViewHolderTopBinding, listener: Lis
 
             }
 
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                var amount = 0.toDouble()
-                try {
-                    val amountInString = p0?.toString()
-                    if (!amountInString.isNullOrEmpty()) {
-                        amount = amountInString.toDouble()
-                    }
-                } catch (e: NumberFormatException) {
-                    e.printStackTrace()
-                }
+            override fun onTextChanged(amount: CharSequence?, p1: Int, p2: Int, p3: Int) {
                 listener.onAmountChanged(amount)
             }
         })
@@ -53,12 +44,11 @@ class TopHolder(private val viewDataBinding: ViewHolderTopBinding, listener: Lis
 
         viewDataBinding.apply {
             this.topItem = topItem
-            executePendingBindings()
         }
     }
 
     interface Listener {
-        fun onAmountChanged(amount: Double?)
+        fun onAmountChanged(amountText: CharSequence?)
         fun showCurrencyListDialog(currencyList: List<String>?)
     }
 }

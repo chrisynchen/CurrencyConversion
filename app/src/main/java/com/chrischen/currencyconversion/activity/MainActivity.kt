@@ -9,6 +9,8 @@ import com.chrischen.currencyconversion.R
 import com.chrischen.currencyconversion.adapter.MainAdapter
 import com.chrischen.currencyconversion.dagger.DaggerMainComponent
 import com.chrischen.currencyconversion.databinding.ActivityMainBinding
+import com.chrischen.currencyconversion.dialog.CurrencySelectionDialog
+import com.chrischen.currencyconversion.viewholder.CurrencySelectionViewHolder
 import com.chrischen.currencyconversion.viewholder.TopHolder
 import com.chrischen.currencyconversion.viewmodel.MainViewModel
 import com.chrischen.currencyconversion.widget.GridItemDecoration
@@ -65,18 +67,26 @@ class MainActivity : AppCompatActivity(), TopHolder.Listener {
         })
     }
 
+    private val currencySelectionListener = object : CurrencySelectionDialog.Listener {
+        override fun onCurrencyClick(currency: String?) {
+            viewModel.changeCurrency(currency)
+        }
+    }
+
     override fun onStart() {
         super.onStart()
         viewModel.onRefresh()
     }
 
-    override fun onAmountChanged(amount: Double?) {
-        amount?.let {
-            viewModel.onCurrencyChanged(inputAmount = it)
-        }
+    override fun onAmountChanged(amountText: CharSequence?) {
+        viewModel.changeAmount(amountText)
     }
 
     override fun showCurrencyListDialog(currencyList: List<String>?) {
-
+        currencyList?.let {
+            CurrencySelectionDialog(this, currencySelectionListener, it)
+                .setOnClickOutsideDismiss(true)
+                .show()
+        }
     }
 }

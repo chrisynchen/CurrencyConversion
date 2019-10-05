@@ -31,18 +31,35 @@ class MainViewModel(private val currencyRepository: ICurrencyRepository) : BaseV
 
     private var selectCurrency = ""
 
-    private var inputAmount = 1.toDouble()
+    private var inputAmount = 0.toDouble()
 
     fun onRefresh() {
-        onCurrencyChanged()
+        onAmountOrCurrencyChanged()
     }
 
-    fun onCurrencyChanged(
+    fun changeAmount(amountText: CharSequence?) {
+        var amount = 0.toDouble()
+        try {
+            val amountString = amountText?.toString()
+            if (!amountString.isNullOrEmpty()) {
+                amount = amountString.toDouble()
+            }
+        } catch (e: NumberFormatException) {
+            e.printStackTrace()
+        }
+        onAmountOrCurrencyChanged(inputAmount = amount)
+    }
+
+    fun changeCurrency(currency: String?) {
+        onAmountOrCurrencyChanged(currency = currency ?: "")
+    }
+
+    private fun onAmountOrCurrencyChanged(
         currency: String = this.selectCurrency,
         inputAmount: Double = this.inputAmount
     ) {
         selectCurrency = currency
-        this.inputAmount = inputAmount;
+        this.inputAmount = inputAmount
 
         val disposable = Single.zip(
             currencyRepository.fetchCurrencyList(),
@@ -76,7 +93,7 @@ class MainViewModel(private val currencyRepository: ICurrencyRepository) : BaseV
                     }
                     MainAdapter.Item.CurrencyRateItem(
                         desc,
-                        inputAmount * (1.toDouble() / selectCurrencyRate) * entry.value
+                        inputAmount * (entry.value / selectCurrencyRate)
                     )
                 }
 
