@@ -1,6 +1,5 @@
 package com.chrischen.currencyconversion.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.chrischen.currencyconversion.adapter.MainAdapter
@@ -10,13 +9,16 @@ import com.chrischen.currencyconversion.repository.ICurrencyRepository
 import com.chrischen.currencyconversion.utility.RxUtil
 import io.reactivex.Single
 import io.reactivex.functions.BiFunction
+import io.reactivex.subjects.PublishSubject
 import retrofit2.Response
+import java.util.concurrent.TimeUnit
 
 /**
  * Created by chris chen on 2019-10-02.
  */
 
 class MainViewModel(private val currencyRepository: ICurrencyRepository) : BaseViewModel() {
+
     companion object {
         private const val TAG = "MainViewModel"
     }
@@ -29,25 +31,44 @@ class MainViewModel(private val currencyRepository: ICurrencyRepository) : BaseV
     val progressVisibility: LiveData<Boolean>
         get() = _progressVisibility
 
+    private val _logMessage = MutableLiveData<Pair<String, String>>()
+    val logMessage: LiveData<Pair<String, String>>
+        get() = _logMessage
+
     private var selectCurrency = ""
 
     private var inputAmount = 0.toDouble()
+
+    private val publishSubject = PublishSubject.create<String>()
+
+    init {
+        val disposable = publishSubject
+            .debounce(1, TimeUnit.SECONDS)
+            .distinct()
+            .subscribe(
+                { amountString ->
+                    var amount = 0.toDouble()
+                    try {
+                        if (!amountString.isNullOrEmpty()) {
+                            amount = amountString.toDouble()
+                        }
+                    } catch (e: NumberFormatException) {
+                        _logMessage.postValue(Pair(TAG, e.message ?: ""))
+                    }
+                    onAmountOrCurrencyChanged(inputAmount = amount)
+                },
+                {
+                    _logMessage.postValue(Pair(TAG, it.message ?: ""))
+                })
+        addDisposable(disposable)
+    }
 
     fun onRefresh() {
         onAmountOrCurrencyChanged()
     }
 
     fun changeAmount(amountText: CharSequence?) {
-        var amount = 0.toDouble()
-        try {
-            val amountString = amountText?.toString()
-            if (!amountString.isNullOrEmpty()) {
-                amount = amountString.toDouble()
-            }
-        } catch (e: NumberFormatException) {
-            e.printStackTrace()
-        }
-        onAmountOrCurrencyChanged(inputAmount = amount)
+        publishSubject.onNext(amountText?.toString() ?: 0.toString())
     }
 
     fun changeCurrency(currency: String?) {
@@ -120,7 +141,7 @@ class MainViewModel(private val currencyRepository: ICurrencyRepository) : BaseV
             .subscribe({
                 _currencyItems.postValue(it)
             }, {
-                Log.e(TAG, it.toString())
+                _logMessage.postValue(Pair(TAG, it.message ?: ""))
             })
         addDisposable(disposable)
     }

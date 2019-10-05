@@ -1,6 +1,7 @@
 package com.chrischen.currencyconversion.activity
 
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
@@ -10,7 +11,6 @@ import com.chrischen.currencyconversion.adapter.MainAdapter
 import com.chrischen.currencyconversion.dagger.DaggerMainComponent
 import com.chrischen.currencyconversion.databinding.ActivityMainBinding
 import com.chrischen.currencyconversion.dialog.CurrencySelectionDialog
-import com.chrischen.currencyconversion.viewholder.CurrencySelectionViewHolder
 import com.chrischen.currencyconversion.viewholder.TopHolder
 import com.chrischen.currencyconversion.viewmodel.MainViewModel
 import com.chrischen.currencyconversion.widget.GridItemDecoration
@@ -64,6 +64,10 @@ class MainActivity : AppCompatActivity(), TopHolder.Listener {
 
         viewModel.currencyItems.observe(this, Observer {
             adapter.setItems(it)
+        })
+
+        viewModel.logMessage.observe(this, Observer {
+            Log.d(it.first, it.second)
         })
     }
 

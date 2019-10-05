@@ -2,18 +2,18 @@ package com.chrischen.currencyconversion.viewholder
 
 import android.text.Editable
 import android.text.TextWatcher
-import android.widget.EditText
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.chrischen.currencyconversion.R
 import com.chrischen.currencyconversion.adapter.MainAdapter
 import com.chrischen.currencyconversion.databinding.ViewHolderTopBinding
 import com.chrischen.currencyconversion.extension.bindView
+import com.google.android.material.textfield.TextInputEditText
 
 class TopHolder(private val viewDataBinding: ViewHolderTopBinding, listener: Listener) :
     RecyclerView.ViewHolder(viewDataBinding.root) {
 
-    private val editCurrencyEditText: EditText by bindView(R.id.editCurrencyEditText)
+    private val editCurrencyEditText: TextInputEditText by bindView(R.id.editCurrencyEditText)
 
     private val selectCurrencyTextView: TextView by bindView(R.id.selectCurrencyTextView)
 
