@@ -23,7 +23,7 @@ class MainActivity : AppCompatActivity(), TopHolder.Listener {
         private const val SPAN_TOP = 3
         private const val SPAN_ITEM = 1
         private const val SPAN_COUNT = SPAN_TOP
-        private const val GRID_ITEM_MARGIN = 8
+        private const val GRID_ITEM_MARGIN = 12
     }
 
     @Inject
