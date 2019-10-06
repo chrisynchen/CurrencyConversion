@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.org/chrisynchen/CurrencyConversion.svg?branch=master)](https://travis-ci.org/chrisynchen/CurrencyConversion)
-[![CircleCI](https://circleci.com/gh/chrisynchen/CurrencyConversion.svg?style=svg&circle-token=2cbbfdf7ab9af39b69a7b6cb37e8c291d5ee8334)](https://circleci.com/gh/chrisynchen/GithubAssignment)
+[![CircleCI](https://circleci.com/gh/chrisynchen/CurrencyConversion.svg?style=svg&circle-token=2cbbfdf7ab9af39b69a7b6cb37e8c291d5ee8334)](https://circleci.com/gh/chrisynchen/CurrencyConversion)
 # CurrencyConversion
 A currency conversion app
 
