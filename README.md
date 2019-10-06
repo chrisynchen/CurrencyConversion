@@ -6,6 +6,9 @@ A currency conversion app
 ## Introduction
 The CurrencyConversion is a demo for check exchange currency rate. The whole project is using MVVM to follow android architecture components. For support libs is using androidx and other libs use as latest version as possible.
 
+## Demo Screenshot
+<img src="screenshot/demo.png" width=320/>
+
 ## Third party libs
 Third-party be used in this repo:
 
