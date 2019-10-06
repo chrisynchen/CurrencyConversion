@@ -123,9 +123,16 @@ class MainViewModel(private val currencyRepository: ICurrencyRepository) : BaseV
                     } else {
                         selectCurrency + " to " + entry.key
                     }
+
+                    //prevent Arithmeticexception
+                    val currencyRate = if (selectCurrencyRate == 0.toDouble()) {
+                        0.toDouble()
+                    } else {
+                        inputAmount * (entry.value / selectCurrencyRate)
+                    }
                     MainAdapter.Item.CurrencyRateItem(
                         desc,
-                        inputAmount * (entry.value / selectCurrencyRate)
+                        currencyRate
                     )
                 }
 
