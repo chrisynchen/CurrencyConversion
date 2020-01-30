@@ -2,4 +2,9 @@
     <string name="app_name">CurrencyConversion</string>
     <string name="dollar_sign">$%f</string>
     <string name="amount_hint">Please input your amount here</string>
+    <string name="authentication_failed">Authentication failed</string>
+    <string name="authentication_succeeded">Authentication succeeded!</string>
+    <string name="dialog_biometric_title">Test biometric login for my app</string>
+    <string name="dialog_biometric_subtitle">Log in using your biometric credential</string>
+    <string name="dialog_biometric_negative_button">Use other way instead</string>
 </resources>

@@ -71,4 +71,5 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-extensions:$versions.lifecycle"
     implementation "com.google.android.material:material:$versions.material"
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:$versions.swiperefreshlayout"
+    implementation 'androidx.biometric:biometric:1.0.1'
 }
