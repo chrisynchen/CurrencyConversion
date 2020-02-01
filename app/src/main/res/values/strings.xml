@@ -7,4 +7,6 @@
     <string name="dialog_biometric_title">Test biometric login for my app</string>
     <string name="dialog_biometric_subtitle">Log in using your biometric credential</string>
     <string name="dialog_biometric_negative_button">Use other way instead</string>
+    <string name="encryption">Encryption</string>
+    <string name="decryption">Decryption</string>
 </resources>

@@ -17,6 +17,10 @@ class TopHolder(private val viewDataBinding: ViewHolderTopBinding, listener: Lis
 
     private val selectCurrencyTextView: TextView by bindView(R.id.selectCurrencyTextView)
 
+    private val encryptionTextView: TextView by bindView(R.id.encryptionTextView)
+
+    private val decryptionTextView: TextView by bindView(R.id.decryptionTextView)
+
     private var topItem: MainAdapter.Item.TopItem? = null
 
     init {
@@ -37,6 +41,14 @@ class TopHolder(private val viewDataBinding: ViewHolderTopBinding, listener: Lis
                 listener.onAmountChanged(amount)
             }
         })
+
+        encryptionTextView.setOnClickListener {
+            listener.onEncryption()
+        }
+
+        decryptionTextView.setOnClickListener {
+            listener.onDecryption()
+        }
     }
 
     fun bind(topItem: MainAdapter.Item.TopItem) {
@@ -50,5 +62,7 @@ class TopHolder(private val viewDataBinding: ViewHolderTopBinding, listener: Lis
     interface Listener {
         fun onAmountChanged(amountText: CharSequence?)
         fun showCurrencyListDialog(currencyList: List<String>?)
+        fun onEncryption()
+        fun onDecryption()
     }
 }
