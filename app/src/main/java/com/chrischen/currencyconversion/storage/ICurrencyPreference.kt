@@ -11,4 +11,6 @@ interface ICurrencyPreference {
     var exchangeRate: ExchangeRate?
     var currencyListDetailTimestamp: Long
     var exchangeRateTimestamp: Long
+    var encryptMessage: String?
+    var iv: String?
 }

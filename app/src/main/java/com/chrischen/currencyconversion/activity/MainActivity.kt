@@ -3,6 +3,7 @@ package com.chrischen.currencyconversion.activity
 import android.annotation.TargetApi
 import android.os.Build
 import android.os.Bundle
+import android.util.Base64
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -22,11 +23,10 @@ import com.chrischen.currencyconversion.utility.BiometricUtils
 import com.chrischen.currencyconversion.viewholder.TopHolder
 import com.chrischen.currencyconversion.viewmodel.MainViewModel
 import com.chrischen.currencyconversion.widget.GridItemDecoration
+import kotlinx.android.synthetic.main.view_holder_top.*
 import java.io.IOException
-import java.nio.charset.Charset
 import java.security.*
 import java.security.cert.CertificateException
-import java.util.*
 import javax.crypto.*
 import javax.crypto.spec.IvParameterSpec
 import javax.inject.Inject
@@ -40,7 +40,6 @@ class MainActivity : AppCompatActivity(), TopHolder.Listener {
         private const val SPAN_COUNT = SPAN_TOP
         private const val GRID_ITEM_MARGIN = 12
         private const val KEY_NAME = "demo_key"
-        private const val KEY_TOKEN = "demo_token"
     }
 
     private val TAG = MainActivity::class.java.simpleName
@@ -53,12 +52,6 @@ class MainActivity : AppCompatActivity(), TopHolder.Listener {
     private val adapter = MainAdapter(this)
 
     private lateinit var biometricPrompt: BiometricPrompt
-
-    private var encryptedBytes: ByteArray? = null
-
-    private var shouldDecrypt = false
-
-    private var encryptingCipher: Cipher? = null
 
     private lateinit var promptInfo: BiometricPrompt.PromptInfo
 
@@ -111,7 +104,9 @@ class MainActivity : AppCompatActivity(), TopHolder.Listener {
         val executor = ContextCompat.getMainExecutor(this)
         biometricPrompt = BiometricPrompt(this, executor, authenticationCallback)
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && BiometricUtils.isAvailable(this)) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
+            BiometricUtils.isAvailable(this) &&
+            BiometricPromptSecretKeyHelper.getSecretKey(KEY_NAME) == null) {
             BiometricPromptSecretKeyHelper.generateBiometricBoundKey(
                 KEY_NAME,
                 true
@@ -145,29 +140,39 @@ class MainActivity : AppCompatActivity(), TopHolder.Listener {
             val cryptoObject = result.cryptoObject ?: return
 
             try {
-                if (shouldDecrypt) {
-                    val byteArray = cryptoObject.cipher?.doFinal(encryptedBytes)
-                    Log.d(TAG, byteArray?.toString(Charset.defaultCharset()))
+                if (CurrencyPreference.encryptMessage != null) {
+                    val byteArray =
+                        cryptoObject.cipher?.doFinal(
+                            Base64.decode(
+                                CurrencyPreference.encryptMessage,
+                                Base64.DEFAULT
+                            )
+                        )
+                    val message = byteArray?.toString(Charsets.UTF_8)
+                    Toast.makeText(this@MainActivity, message, Toast.LENGTH_SHORT).show()
                 } else {
                     // Save the cipher to use for decryption.
-                    encryptingCipher = cryptoObject.cipher
-                    encryptedBytes = encryptingCipher?.doFinal(
-                        KEY_TOKEN.toByteArray(Charset.defaultCharset())
+                    val encryptingCipher = cryptoObject.cipher
+                    val encryptedBytes = encryptingCipher?.doFinal(
+                        editCurrencyEditText.text.toString().toByteArray(Charsets.UTF_8)
                     )
-                    Log.d(TAG, KEY_TOKEN)
-                    Log.d(TAG, Arrays.toString(encryptedBytes))
+                    val encryptedMessage = Base64.encodeToString(encryptedBytes, Base64.DEFAULT)
+                    CurrencyPreference.encryptMessage = encryptedMessage
+                    val iv = Base64.encodeToString(cryptoObject.cipher!!.iv, Base64.DEFAULT)
+                    CurrencyPreference.iv = iv
+                    Log.d(TAG, "iv:$iv")
+                    Log.d(TAG, "encryptedMessage:$encryptedMessage")
+                    Toast.makeText(
+                        applicationContext,
+                        R.string.authentication_succeeded, Toast.LENGTH_SHORT
+                    )
+                        .show()
                 }
             } catch (e: BadPaddingException) {
                 Log.e(TAG, e.toString())
             } catch (e: IllegalBlockSizeException) {
                 Log.e(TAG, e.toString())
             }
-
-            Toast.makeText(
-                applicationContext,
-                R.string.authentication_succeeded, Toast.LENGTH_SHORT
-            )
-                .show()
         }
 
         override fun onAuthenticationFailed() {
@@ -221,6 +226,8 @@ class MainActivity : AppCompatActivity(), TopHolder.Listener {
         if (cipher == null || secretKey == null) {
             return
         }
+        CurrencyPreference.encryptMessage = null
+        CurrencyPreference.iv = null
         try {
             cipher!!.init(Cipher.ENCRYPT_MODE, secretKey)
             biometricPrompt.authenticate(
@@ -229,7 +236,6 @@ class MainActivity : AppCompatActivity(), TopHolder.Listener {
             )
             Log.d(TAG, "Started authentication with a crypto object")
             authenticateWithCrypto(cipher)
-            shouldDecrypt = false
         } catch (e: InvalidKeyException) {
             Log.e(TAG, e.toString())
         }
@@ -238,19 +244,15 @@ class MainActivity : AppCompatActivity(), TopHolder.Listener {
     private fun authenticateWithDecryption() {
         val cipher = getCryptoCipher()
         val secretKey = getSecretKey()
-        if (cipher == null || secretKey == null) {
-            return
-        }
-
-        if (encryptingCipher == null) {
-            Log.d(TAG, "User must first encrypt a message");
+        if (cipher == null || secretKey == null || CurrencyPreference.iv == null) {
             return
         }
 
         try {
             cipher.init(
-                Cipher.DECRYPT_MODE, secretKey,
-                IvParameterSpec(encryptingCipher!!.iv)
+                Cipher.DECRYPT_MODE,
+                secretKey,
+                IvParameterSpec(Base64.decode(CurrencyPreference.iv, Base64.DEFAULT))
             )
             biometricPrompt.authenticate(
                 promptInfo,
@@ -258,7 +260,6 @@ class MainActivity : AppCompatActivity(), TopHolder.Listener {
             )
             Log.d(TAG, "Started authentication with a crypto object");
             authenticateWithCrypto(cipher)
-            shouldDecrypt = true
         } catch (e: InvalidKeyException) {
             Log.e(TAG, e.toString())
         } catch (e: InvalidAlgorithmParameterException) {

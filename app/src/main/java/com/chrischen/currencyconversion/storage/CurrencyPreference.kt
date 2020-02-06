@@ -15,6 +15,8 @@ object CurrencyPreference: ICurrencyPreference {
     private const val CURRENCY_LIST_DETAIL_TIMESTAMP = "CURRENCY_LIST_DETAIL_TIMESTAMP"
     private const val EXCHANGE_RATE = "EXCHANGE_RATE"
     private const val EXCHANGE_RATE_TIMESTAMP = "EXCHANGE_RATE_TIMESTAMP"
+    private const val ENCRYPT_MESSAGE = "ENCRYPT_MESSAGE"
+    private const val IV = "IV"
 
 
     override fun init(context: Context) {
@@ -90,5 +92,29 @@ object CurrencyPreference: ICurrencyPreference {
         get() = preferences.getLong(EXCHANGE_RATE_TIMESTAMP, 0)
         set(value) = preferences.edit {
             it.putLong(EXCHANGE_RATE_TIMESTAMP, value)
+        }
+
+    override var encryptMessage: String? = null
+        get() {
+            if (field == null) {
+                field = preferences.getString(ENCRYPT_MESSAGE, null)
+            }
+            return field
+        }
+        set(value) = preferences.edit {
+            field = value
+            it.putString(ENCRYPT_MESSAGE, value)
+        }
+
+    override var iv: String? = null
+        get() {
+            if (field == null) {
+                field = preferences.getString(IV, null)
+            }
+            return field
+        }
+        set(value) = preferences.edit {
+            field = value
+            it.putString(IV, value)
         }
 }

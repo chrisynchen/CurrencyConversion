@@ -116,11 +116,11 @@ internal object BiometricPromptSecretKeyHelper {
         IOException::class,
         UnrecoverableKeyException::class
     )
-    fun getSecretKey(keyName: String): SecretKey {
+    fun getSecretKey(keyName: String): SecretKey? {
         val keyStore = KeyStore.getInstance("AndroidKeyStore")
         // Before the keystore can be accessed, it must be loaded.
         keyStore.load(null)
-        return keyStore.getKey(keyName, null) as SecretKey
+        return keyStore.getKey(keyName, null) as? SecretKey
     }
 
     @Throws(
